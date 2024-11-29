@@ -1,29 +1,32 @@
 import pygame
 
-from ..configuration import *
+from configuration import *
 
 
 class Text:
+    """
+    Text class. 
 
-    def __init__(self, text, font_size, x, y):
+    Method available: 
+    - get_text_surface() .... : Return the generated surface to blit onto 
+                                another surface. 
+    - set_text(str) ......... : Set the text to a new value. 
+    """
+
+    # * Constructor of the Text class. 
+    def __init__(self, text, font_size):
         self.font = pygame.font.Font(FONT_PATH, font_size)
         self.text = text
-        self.x = x
-        self.y = y
+        return
 
-
-    def get_text_surface(self):
-        return self.font.render(self.text, True, TEXT_COLOR)
-    
 
     # * _ GETTERS & SETTERS ____________________________________________________
-    def set_text(self, new_text): 
+    def get_text_surface(self):
+        return self.font.render(self.text, True, TEXT_COLOR)
+
+    def set_text(self, new_text: str): 
         self.text = new_text
         return
-    
-
-    def get_coords(self): 
-        return self.x, self.y
     
 
     # * _ METHOD OVERRIDES _____________________________________________________
