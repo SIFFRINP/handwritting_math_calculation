@@ -20,6 +20,7 @@ class Window:
     - get_draw_area_pxl_array() . : return a 3D numpy array containing every 
                                     pixel of the surface. 
     - set_result_text(str) ...... : Set the result text to a new value. 
+    - set_error_text(str) ....... : Set the error text to a new value. 
     """
 
     # * Constructor of the Window class. 
@@ -44,8 +45,19 @@ class Window:
         self.draw_area.fill(DRAWING_AREA_COLOR)
         self.last_saved_pen_pos = -1, -1
 
-        # Text
-        self.calculus_text = Text("~", 500)
+        # Texts
+        self.calculus_text = Text("~")
+        self.error_text = Text("", ERROR_COLOR)
+
+        self.constant_texts = [
+            Text("press <q> to clear the renderer. "), 
+            Text("press <esc> to exit the program. "), 
+        ]
+
+        self.constant_texts_coords = [
+            (5, 0), 
+            (5, 15), 
+        ]
 
         set_window_attributes()
         return
@@ -82,27 +94,24 @@ class Window:
         return
 
 
+
     # * Render the window element onto the main surface. 
     def render(self): 
         self.screen.fill(BACKGROUND_COLOR)
         self.screen.blit(self.draw_area, (0, 0))
 
         # Get the text surface. 
-        text_surface = self.calculus_text.get_text_surface()
+        res_text_surf = self.calculus_text.get_text_surface(scale_height=CALCULUS_HEIGHT)
+        err_text_surf = self.error_text.get_text_surface(scale_height=25) 
 
-        # Resize it in height, keeping the aspect ratio. 
-        text_w = text_surface.get_width()
-        text_h = text_surface.get_height()
-        aspect_ratio = text_w / text_h
-        
-        new_h = CALCULUS_HEIGHT
-        new_w = CALCULUS_HEIGHT * aspect_ratio
-        
-        # Resize the surface. 
-        text_surface = pygame.transform.smoothscale(text_surface, (new_w, new_h))
 
         # Render the result text on the screen. 
-        self.screen.blit(text_surface, (CALCULUS_HEIGHT / 4, self.win_h - CALCULUS_HEIGHT + 2))
+        self.screen.blit(res_text_surf, (CALCULUS_HEIGHT / 4, self.win_h - CALCULUS_HEIGHT + 2))
+        self.screen.blit(err_text_surf, (5, self.win_h - CALCULUS_HEIGHT - 25))
+        
+        for coords, text in zip(self.constant_texts_coords, self.constant_texts):
+            self.screen.blit(text.get_text_surface(scale_height=25), coords)
+        
         return
 
 
@@ -146,8 +155,14 @@ class Window:
 
         return buf
 
+
     def set_result_text(self, new_text: str): 
         self.calculus_text.set_text("~ " + new_text)
+        return 
+    
+
+    def set_error_text(self, new_text: str): 
+        self.error_text.set_text("~[ERROR] " + new_text)
         return 
 
 # * _ STATIC FUNCTIONS _________________________________________________________

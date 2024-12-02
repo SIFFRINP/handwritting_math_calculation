@@ -15,15 +15,15 @@ CALCULUS_HEIGHT = 65
 PEN_WIDTH = 10
 
 # * _ TEXT _____________________________________________________________________
-FONT_PATH      = os.path.join("fonts", "math.ttf")
-MATH_TEXT_SIZE = 20
-HINT_TEXT_SIZE = 15
+FONT_PATH = os.path.join("fonts", "math.ttf")
+FONT_SIZE = 100
 
 # * _ COLORS ___________________________________________________________________
 BACKGROUND_COLOR   = (211, 211, 211)
 DRAWING_AREA_COLOR = (255, 255, 255)
 PEN_COLOR          = (0  , 0  , 0  )
 TEXT_COLOR         = (0  , 0  , 0  )
+ERROR_COLOR        = (156, 69 , 79 )
 
 
 
