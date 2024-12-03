@@ -26,6 +26,9 @@ TEXT_COLOR         = (0  , 0  , 0  )
 ERROR_COLOR        = (156, 69 , 79 )
 
 
+# * _ MODEL ____________________________________________________________________
+MODEL_IMG_SIZE = 45 
+
 
 if __name__ == "__main__": 
     print("\x1b[33m~[WARNING] This script is not meant to be executed.\x1b[0m"); 
