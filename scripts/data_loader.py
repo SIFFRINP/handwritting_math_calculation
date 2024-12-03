@@ -1,24 +1,28 @@
 import tensorflow as tf
 import os
 
-# Charger les données
+
 def load_data(data_dir, img_height=45, img_width=45, batch_size=32, test_split=0.1):
     # Vérification du chemin
     if not os.path.isdir(data_dir):
         raise FileNotFoundError(f"Chemin invalide ou dossier introuvable : {data_dir}")
 
     print(f"Chemin des données valide : {data_dir}")
-
-    # Chargement des données. Je charge tout le dataset d'un coup sans aucun split
+    
+    # Charger les données
+    selected_classes = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
     dataset = tf.keras.utils.image_dataset_from_directory(
         data_dir,
         seed=123,
         image_size=(img_height, img_width),
-        batch_size=batch_size
+        batch_size=32,
+        labels='inferred',
+        class_names=selected_classes
     )
 
     # Création des splits
-    total_size = len(dataset) 
+    # total_size = len(dataset) 
+    total_size = len(list(dataset.unbatch())) # pour obtenir le vrai nombre d'éléments sans les batchs
     test_size = int(total_size * test_split) # Split pour les tests
     train_val_size = total_size - test_size # Split pour l'entrapinement + validation
 
