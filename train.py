@@ -1,9 +1,9 @@
 import os
 import tensorflow as tf
-from scripts3.data_loader import load_data
-from scripts3.preprocessing import preprocess_images, preprocess_dataset
-from scripts3.model_builder import build_cnn_model, model_summary
-from scripts3.model_trainer import compile_and_train, save_model
+from scripts.data_loader import load_data
+from scripts.preprocessing import preprocess_images, preprocess_dataset
+from scripts.model_builder import build_cnn_model, model_summary
+from scripts.model_trainer import compile_and_train, save_model
 import matplotlib.pyplot as plt
 
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
@@ -18,7 +18,9 @@ dataset, class_names = load_data(data_dir, img_height=45, img_width=45, batch_si
 
 
 # Spliter les données brutes
-total_size = len(list(dataset))  # Calculer le nombre total d'exemples
+# total_size = len(list(dataset))  # Calculer le nombre total d'exemples
+total_size = tf.data.experimental.cardinality(dataset).numpy()
+
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement
 val_size = total_size - train_size
 
@@ -35,6 +37,7 @@ val_dataset = dataset.skip(train_size)
 # Appliquer le prétraitement à chaque ensemble
 train_ds = preprocess_dataset(train_dataset, batch_size=32)
 val_ds = preprocess_dataset(val_dataset, batch_size=32)
+
 
 # Afficher un aperçu pour valider le prétraitement
 
@@ -59,7 +62,7 @@ print("Résumé du modèle :")
 model_summary(model)
 
 
-# # Entraîner le modèle
+# Entraîner le modèle
 history = compile_and_train(model, train_ds, val_ds, epochs=15, learning_rate=0.001)
 
 # # Afficher les métriques

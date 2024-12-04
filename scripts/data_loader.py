@@ -15,8 +15,5 @@ def load_data(data_dir, img_height=45, img_width=45, batch_size=None):
     
     class_names = dataset.class_names
     print(f"Classes trouvées : {class_names}")
-
-    for image, label in dataset.take(1):
-        print(f"Première image shape : {image.shape}, Étiquette : {label}")
     
     return dataset, class_names
