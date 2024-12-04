@@ -1,6 +1,7 @@
 
 # * _ PARSER ___________________________________________________________________
-AVAILABLE_OPERATOR  = "+-"
+AVAILABLE_OPERATOR  = "+-*/"
+PRIORITY_OPERATOR   = "*/"
 END_EXPRESSION_CHAR = "="
 
 

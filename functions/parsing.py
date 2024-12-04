@@ -86,7 +86,7 @@ def validate_array(number_list: list, operator_list: list) -> bool:
     return len(number_list) - 1 == len(operator_list)
 
 
-def exec_calculation(number_list: list, operator_list: list) -> int: 
+def perform_calc(number_list: list, operator_list: list) -> int: 
     """
     Calculate a parsed expression. 
 
@@ -107,17 +107,49 @@ def exec_calculation(number_list: list, operator_list: list) -> int:
         return number_list[0]
     
 
-    len_number_list = len(number_list)
-    len_operator_list = len(operator_list)
+    # Execute the priority calculation before hand. 
+    perform_priority_calc(number_list, operator_list)
 
-    i = 0
+
+    # Execute secondary operator. 
     result = number_list[0]
-
+    
+    i = 0
+    len_operator_list = len(operator_list)
     while (i < len_operator_list):
         result = operator_calc(result, number_list[i + 1], operator_list[i])
         i += 1
 
     return result
+
+
+def perform_priority_calc(number_list: list, operator_list: list): 
+    """
+    Perform every priority calculation (multiply and divide) before performing 
+    the complete calculation. 
+
+    :param number_list: list of all numbers in the expression. 
+    :param operator_list: list of all operators in the expression. 
+    """
+    i = 0
+    while (i < len(operator_list)): 
+
+        # If the operator is not a priority operator, skip it. 
+        if (operator_list[i] not in PRIORITY_OPERATOR):
+            i += 1
+            continue
+
+        # Perform the calculation and modify the lists accordingly. 
+        operator = operator_list.pop(i)
+        nb = number_list.pop(i + 1)
+
+        match (operator):
+            case "*": 
+                number_list[i] *= nb
+            case "/": 
+                number_list[i] /= nb
+    
+    return
 
 
 def operator_calc(nb1: int, nb2: int, op: str) -> int: 
@@ -139,6 +171,8 @@ def operator_calc(nb1: int, nb2: int, op: str) -> int:
 
         case _: 
             return nb1
+    
+    return
 
 
 if __name__ == "__main__": 
