@@ -46,19 +46,11 @@ def compile_and_train(model, train_ds, val_ds, epochs=20, learning_rate=0.001):
 #     plt.show()
 
 
-
-def save_model(model, model_name="handwritten_math_calculator_model2.keras", save_dir="models"):
+def save_model(model, model_name="handwritten_math_calculator_model.keras", save_dir="models"):
     os.makedirs(save_dir, exist_ok=True)
     model_path = os.path.join(save_dir, model_name)
     model.save(model_path)
     print(f"Modèle sauvegardé dans : {model_path}")
-
-
-# def save_model(model, model_name="handwritten_math_calculator_model.keras", save_dir="models"):
-#     os.makedirs(save_dir, exist_ok=True)
-#     model_path = os.path.join(save_dir, model_name)
-#     model.save(model_path)
-#     print(f"Modèle sauvegardé dans : {model_path}")
 
 
 
