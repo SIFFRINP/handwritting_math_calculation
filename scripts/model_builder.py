@@ -19,11 +19,11 @@ def build_cnn_model(num_classes, input_shape=(45, 45, 1)):
         layers.BatchNormalization(),
 
         # Couche entièrement connectée
-        layers.Flatten(), #Transforme la sortie 2D des convolutions en une seule dimension (vectorisation).
+        layers.Flatten(), # Transforme la sortie 2D des convolutions en une seule dimension (vectorisation).
 
-        layers.Dense(128, activation='relu'), #Ajoute 128 neurones
-        layers.Dropout(0.5), #Désactive aléatoirement 50% des neurones pour éviter le sur-apprentissage
-        layers.Dense(num_classes, activation='softmax')  # 10 classes pour MNIST
+        layers.Dense(128, activation='relu'), # Ajoute 128 neurones
+        layers.Dropout(0.5), # Désactive aléatoirement 50% des neurones pour éviter le sur-apprentissage
+        layers.Dense(num_classes, activation='softmax')
     ])
     return model
 
