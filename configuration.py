@@ -4,14 +4,12 @@ import os
 DEBUG = True
 
 # * _ WINDOW ___________________________________________________________________
-USE_ABS_SIZE  = False
-W_BASE_WIDTH  = 1000
-W_BASE_HEIGHT = 400
-W_NAME        = "handwritting_math_calculation" 
-W_ICON_PATH   = os.path.join("icons", "icon.png")
-
+USE_ABS_SIZE    = False
+W_BASE_WIDTH    = 1000
+W_BASE_HEIGHT   = 400
+W_NAME          = "handwritting_math_calculation" 
+W_ICON_PATH     = os.path.join("icons", "icon.png")
 CALCULUS_HEIGHT = 65
-
 
 # * _ DRAW AREA ________________________________________________________________
 PEN_WIDTH = 10
@@ -27,6 +25,10 @@ PEN_COLOR          = (0  , 0  , 0  )
 TEXT_COLOR         = (0  , 0  , 0  )
 ERROR_COLOR        = (156, 69 , 79 )
 
+# * _ PARSER ___________________________________________________________________
+AVAILABLE_OPERATOR  = "+-*/"
+PRIORITY_OPERATOR   = "*/"
+END_EXPRESSION_CHAR = "="
 
 # * _ MODEL ____________________________________________________________________
 MODEL_IMG_SIZE = 45 
