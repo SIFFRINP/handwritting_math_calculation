@@ -1,6 +1,8 @@
 import os
 
 
+DEBUG = True
+
 # * _ WINDOW ___________________________________________________________________
 USE_ABS_SIZE  = False
 W_BASE_WIDTH  = 1000

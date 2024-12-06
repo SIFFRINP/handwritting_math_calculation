@@ -30,5 +30,5 @@ if __name__ == "__main__":
         regions = pixels_isolation(img, bounding_boxes)
         
         # Put the regions into the model. 
-
+        # print(regions)
         window.set_error_text(f"time to detect: {(time.time() - start_time):.2f}secs.")

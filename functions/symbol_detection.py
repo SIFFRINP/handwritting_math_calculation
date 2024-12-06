@@ -14,15 +14,40 @@ def get_symbol_bounding(img: np.ndarray) -> list:
 
     bounding_boxes = []
 
+    # Convert to RGB to draw rectangles on top of the image in debug mode. 
+    if DEBUG: 
+        output = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
     # Convert img to grayscale and threshold it for the contour detection. 
     _, thresh_img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)
+
+    # Dilate the image on the y axis to be able to detect 2 or more part symbol 
+    # like - and /. 
+    kernel = np.ones((MODEL_IMG_SIZE, 1), np.uint8) 
+    dilated = cv2.dilate(thresh_img, kernel, iterations=1)
     
     # Perform the contour detection. 
-    contours, _ = cv2.findContours(thresh_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+
     for contour in contours:
         # Append every contour to the bounding_boxes list. 
-        bounding_boxes.append(cv2.boundingRect(contour))
-    
+        x, y, w, h = cv2.boundingRect(contour)
+
+        if (w < MODEL_IMG_SIZE and h < MODEL_IMG_SIZE): 
+            continue
+
+        bounding_boxes.append((x, y, w, h))
+
+        # Add rectangle to show bounding box in debug mode. 
+        if DEBUG: 
+            cv2.rectangle(output, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+    # Show each symbol on separate window in debug mode. 
+    if DEBUG: 
+        cv2.imshow("Fusion via dilatation", output) 
+        cv2.imshow("dilated img", dilated) 
+
     return bounding_boxes
 
 
@@ -45,6 +70,9 @@ def pixels_isolation(img: np.ndarray, bounding_boxes: list):
         x, y, w, h = box
         cropped_region = cv2.resize(img[y:y+h, x:x+w], (45, 45))
         regions[i] = cropped_region
+
+        if DEBUG:
+            cv2.imshow(f"{i}", cropped_region)
 
     return regions
 
