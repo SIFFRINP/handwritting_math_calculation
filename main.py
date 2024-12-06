@@ -1,17 +1,18 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
-import pygame
 from functions import *
 from configuration import * 
 from classes import Window
-import numpy as np
 import tensorflow as tf
 from tensorflow.keras.utils import load_img, img_to_array
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 import matplotlib.pyplot as plt
+import numpy as np
+import pygame
+import time
 
 
 INSTRUCTION = "8+4*10-3/2="
@@ -43,7 +44,7 @@ if __name__ == "__main__":
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(project_root)
 
-    image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "NON.png")
+    image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "OUI.png")
     print(image_path)
 
     model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model.keras")
@@ -82,9 +83,19 @@ if __name__ == "__main__":
 
     # * _ MAIN LOOP ____________________________________________________________
     while window.get_running_state():
-        try: 
-            window.update()
+        window.update()
 
-        except KeyboardInterrupt: 
-            print("\x1b[1m\x1b[32mGoodbye :)\x1b[0m\n")
-            break
+        # Pause the detection and prediction if the user is drawing. 
+        if window.get_mouse_pressed():
+            continue
+
+        start_time = time.time()
+
+        # Get the drawing area buffer and extract every digit from it. 
+        img = window.get_draw_area_pxl_array(flip=True)
+        bounding_boxes = get_symbol_bounding(img)
+        regions = pixels_isolation(img, bounding_boxes)
+        
+        # Put the regions into the model. 
+        # print(regions)
+        window.set_error_text(f"time to detect: {(time.time() - start_time):.2f}secs.")

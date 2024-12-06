@@ -1,6 +1,8 @@
 import os
 
 
+DEBUG = True
+
 # * _ WINDOW ___________________________________________________________________
 USE_ABS_SIZE    = False
 W_BASE_WIDTH    = 1000
@@ -27,6 +29,9 @@ ERROR_COLOR        = (156, 69 , 79 )
 AVAILABLE_OPERATOR  = "+-*/"
 PRIORITY_OPERATOR   = "*/"
 END_EXPRESSION_CHAR = "="
+
+# * _ MODEL ____________________________________________________________________
+MODEL_IMG_SIZE = 45 
 
 
 if __name__ == "__main__": 

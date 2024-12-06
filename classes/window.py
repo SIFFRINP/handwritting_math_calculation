@@ -1,7 +1,11 @@
 from configuration import *
 from classes.text import Text
+from datetime import datetime
 import pygame
+from PIL import Image
 import numpy
+import cv2
+
 
 class Window:
     """
@@ -16,8 +20,10 @@ class Window:
     - update() .................. : Update the window renderer.  
     - event_handler() ........... : Handle every event of the window. 
     - get_running_state() ....... : return the state of the program (False if 
-                                    it should close, True otherwise).  
-    - get_draw_area_pxl_array() . : return a 3D numpy array containing every 
+                                    it should close, True otherwise). 
+    - get_mouse_pressed() ........: Return True if the user is drawing, False
+                                    otherwise. 
+    - get_draw_area_pxl_array() . : Return a 3D numpy array containing every 
                                     pixel of the surface. 
     - set_result_text(str) ...... : Set the result text to a new value. 
     - set_error_text(str) ....... : Set the error text to a new value. 
@@ -43,6 +49,9 @@ class Window:
         # Create the drawing area surface. 
         self.draw_area = pygame.Surface((self.win_w, self.win_h - CALCULUS_HEIGHT))
         self.draw_area.fill(DRAWING_AREA_COLOR)
+
+        # Mouse state. 
+        self.mouse_is_pressed = False
         self.last_saved_pen_pos = -1, -1
 
         # Texts
@@ -50,13 +59,13 @@ class Window:
         self.error_text = Text("", ERROR_COLOR)
 
         self.constant_texts = [
-            Text("press <q> to clear the renderer. "), 
-            Text("press <esc> to exit the program. "), 
+            Text("press [q] to clear the renderer. "), 
+            Text("press [esc] to exit the program. "), 
         ]
 
         self.constant_texts_coords = [
             (5, 0), 
-            (5, 15), 
+            (5, 17), 
         ]
 
         set_window_attributes()
@@ -65,10 +74,8 @@ class Window:
 
     # * Handle the drawing on the drawing area using the mouse. 
     def draw(self): 
-        mouse_state = pygame.mouse.get_pressed(num_buttons=3)
-
         # Check if left or right mouse buttons are pressed. 
-        if not mouse_state[0] and not mouse_state[2]:
+        if not self.mouse_is_pressed:
             self.last_saved_pen_pos = -1, -1
             return
         
@@ -83,6 +90,10 @@ class Window:
                 self.last_saved_pen_pos, 
                 PEN_WIDTH
             )
+
+        # Draw a circle at the beginning to smooth out the pen. 
+        else: 
+            pygame.draw.circle(self.draw_area, PEN_COLOR, mouse_coords, 5) 
 
         self.last_saved_pen_pos = mouse_coords
         return
@@ -128,26 +139,55 @@ class Window:
 
     # * Handle the exit and keyboard input. 
     def event_handler(self):
+
+        # Update mouse pressed state. 
+        mouse_state = pygame.mouse.get_pressed(num_buttons=3)
+        if mouse_state[0] or mouse_state[2]: 
+            self.mouse_is_pressed = True
+
+        else: 
+            self.mouse_is_pressed = False
+
+        # Handle window event. 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
             
+            # Clear the drawing area surface. 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     self.clear_draw_area()
                 
+                # Close the program. 
                 if event.key == pygame.K_ESCAPE: 
                     self.is_running = False
+
+                # Save the drawing on the screen. 
+                if event.key == pygame.K_s: 
+                    if (not os.path.isdir("saved_drawing")): 
+                        print("~[ERROR] saved_drawing directory don't exist.")
+                        return
+                    
+                    timestamp = datetime.timestamp(datetime.now())
+
+                    img = Image.fromarray(self.get_draw_area_pxl_array(flip=True))
+                    img.save(os.path.join("saved_drawing", f"drawing_{timestamp}.png"))
+
         return 
 
 
     # * _ GETTERS & SETTERS ____________________________________________________
     def get_running_state(self) -> bool: 
         return self.is_running
+    
+
+    def get_mouse_pressed(self) -> bool: 
+        return self.mouse_is_pressed
 
 
     def get_draw_area_pxl_array(self, flip: bool = False) -> numpy.ndarray:
         buf = pygame.surfarray.array3d(self.draw_area)
+        buf = cv2.cvtColor(buf, cv2.COLOR_BGR2GRAY)
 
         # Flip the height and width. 
         if flip: 
