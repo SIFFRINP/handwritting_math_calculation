@@ -6,15 +6,14 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model
 from scripts.model_trainer import compile_and_train, save_model
+from scripts.config import epochs, learning_rate, data_dir, img_height, img_width
+
 
 
 # __ INITIALISATION __________________
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
-print(project_root)
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
 print(data_dir)
-dataset, class_names = load_data(data_dir, img_height=45, img_width=45)
+dataset, class_names = load_data(data_dir, img_height, img_width)
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement
@@ -31,7 +30,10 @@ print("Le dataset de validation a la bonne taille")
 train_dataset = dataset.take(20)  # On limite à 20 images pour un test rapide
 val_dataset = dataset.skip(20)
 train_ds = preprocess_dataset(train_dataset, batch_size=2)
+# train_ds = preprocess_dataset(train_dataset, batch_size=2, augment=True)
 val_ds = preprocess_dataset(val_dataset, batch_size=2)
+# val_ds = preprocess_dataset(train_dataset, batch_size=2, augment=False)
+
 
 input_shape = (45, 45, 1)
 num_classes = len(class_names)
@@ -69,7 +71,7 @@ history = compile_and_train(
     train_ds,
     val_ds,
     epochs=2,
-    learning_rate=0.001,
+    learning_rate=learning_rate,
     class_weight=class_weights
 )
 

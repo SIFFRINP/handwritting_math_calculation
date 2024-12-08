@@ -5,16 +5,14 @@ import matplotlib.pyplot as plt
 from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model, model_summary
-from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class
+from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
+from scripts.config import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
 
 
 # __ INITIALISATION __________________
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
-print(project_root)
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
 print(data_dir)
-dataset, class_names = load_data(data_dir, img_height=45, img_width=45)
+dataset, class_names = load_data(data_dir, img_height, img_width)
 
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
@@ -31,8 +29,9 @@ assert tf.data.experimental.cardinality(val_dataset).numpy() == val_size, "Le da
 print("Le dataset de validation a la bonne taille")
 
 
-train_ds = preprocess_dataset(train_dataset, batch_size=32)
-val_ds = preprocess_dataset(val_dataset, batch_size=32)
+train_ds = preprocess_dataset(train_dataset, batch_size, augment=True)
+val_ds = preprocess_dataset(val_dataset, batch_size, augment=False)
+
 
 input_shape = (45, 45, 1)
 num_classes = len(class_names)
@@ -74,8 +73,8 @@ history = compile_and_train(
     model,
     train_ds,
     val_ds,
-    epochs=20,
-    learning_rate=0.001,
+    epochs=epochs,
+    learning_rate=learning_rate,
     class_weight=class_weights
 )
 
@@ -83,6 +82,9 @@ history = compile_and_train(
 # Vérifier les métriques par classe
 print("\n=== Vérification des métriques par classe ===")
 evaluate_metrics_per_class(model, val_ds, class_names)
+
+# Observer la confusion matrix
+plot_confusion_matrix(model, val_ds, class_names)
 
 
 # Vérification des résultats
@@ -128,4 +130,4 @@ print("=== Tests de model_trainer.py terminés avec succès ===")
 
 
 # Sauvegarder le modèle
-save_model(model, model_name="handwritten_math_calculator_model3.keras", save_dir="models")
+save_model(model, model_name, save_dir)

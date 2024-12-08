@@ -4,14 +4,13 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 from PIL import Image
 import numpy as np
+from scripts.config import data_dir, img_height, img_width, batch_size
 
 # __ INITIALISATION __________________
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
-print(project_root)
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
+
 print(data_dir)
-dataset, class_names = load_data(data_dir, img_height=45, img_width=45)
+dataset, class_names = load_data(data_dir, img_height, img_width)
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement
@@ -20,8 +19,9 @@ val_size = total_size - train_size
 train_dataset = dataset.take(train_size)
 val_dataset = dataset.skip(train_size)
 
-# Réduire la taille pour les tests (20 images par split)
+# Réduire la taille pour les tests (32 images par split)
 test_subset = train_dataset.take(32)
+
 
 
 
@@ -44,7 +44,7 @@ for image, label in test_subset.take(1):
 # __ TEST POUR PREPROCESS_DATASET ____________________
 
 print("\n=== Test pour preprocess_dataset ===")
-preprocessed_dataset = preprocess_dataset(test_subset)
+preprocessed_dataset = preprocess_dataset(test_subset, batch_size)
 for batch_images, batch_labels in preprocessed_dataset.take(1):
     print(f"Batch images shape : {batch_images.shape}, Batch labels : {batch_labels}")
     print(f"Valeurs min/max dans le batch : {batch_images.numpy().min()} / {batch_images.numpy().max()}")
@@ -60,7 +60,7 @@ for batch_images, batch_labels in preprocessed_dataset.take(1):
 print("\n=== Test pour preprocess_image_main ===")
 # Créer une image de test
 test_image = Image.fromarray(np.random.randint(0, 255, (60, 60, 3), dtype=np.uint8))
-processed_image = preprocess_image_main(test_image, img_height=45, img_width=45)
+processed_image = preprocess_image_main(test_image, img_height, img_width)
 print(f"Image après traitement shape : {processed_image.shape}")
 print(f"Valeurs min/max après traitement : {processed_image.numpy().min()} / {processed_image.numpy().max()}")
 print(f"Image après traitement (valeurs) :")

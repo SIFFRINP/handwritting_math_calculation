@@ -2,10 +2,11 @@ import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
 from scripts.model_builder import build_cnn_model
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from scripts.config import epochs, learning_rate, model_name, save_dir
 
 
-def compile_and_train(model, train_ds, val_ds, epochs=20, learning_rate=0.001, class_weight=None):
+def compile_and_train(model, train_ds, val_ds, epochs, learning_rate, class_weight=None):
     # Préparation du modèle
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
@@ -32,7 +33,7 @@ def compile_and_train(model, train_ds, val_ds, epochs=20, learning_rate=0.001, c
     return history
 
 
-def save_model(model, model_name="handwritten_math_calculator_model.keras", save_dir="models"):
+def save_model(model, model_name, save_dir):
     os.makedirs(save_dir, exist_ok=True)
     model_path = os.path.join(save_dir, model_name)
     model.save(model_path)
@@ -58,3 +59,19 @@ def evaluate_metrics_per_class(model, val_ds, class_names):
     )
     print("=== Rapport de classification par classe ===")
     print(report)
+
+
+
+def plot_confusion_matrix(model, val_ds, class_names):
+    y_true = []
+    y_pred = []
+
+    for images, labels in val_ds:
+        predictions = model.predict(images)
+        y_true.extend(labels.numpy())
+        y_pred.extend(tf.argmax(predictions, axis=1).numpy())
+
+    cm = confusion_matrix(y_true, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
+    disp.plot(cmap='viridis', xticks_rotation='vertical')
+    plt.show()

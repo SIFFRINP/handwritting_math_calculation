@@ -12,6 +12,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 import matplotlib.pyplot as plt
+from scripts.config import image_path, model_path, class_names
 
 
 # INSTRUCTION = "8+4*10-3/2="
@@ -39,11 +40,6 @@ if __name__ == "__main__":
     # pygame.init()
     # window = Window()
     # window.set_result_text(f"{INSTRUCTION}{result}")
-
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "OUII.png")
-    model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model3.keras")
-    class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
 
     # Chargement du modèle
     model = tf.keras.models.load_model(model_path)

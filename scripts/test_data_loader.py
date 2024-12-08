@@ -1,17 +1,15 @@
 import os
 import tensorflow as tf
-from data_loader import load_data
+from scripts.data_loader import load_data
+from scripts.config import img_height, img_width, data_dir, project_root
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
-print(project_root)
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
-print(data_dir)
+print("chemin data_dir : ", data_dir)
 data_bad = os.path.join(project_root, "handwritting_math_calculation", "images")
 
 
 def test_load_data():
     try:
-        dataset, class_names = load_data(data_dir, img_height=45, img_width=45, batch_size=None)
+        dataset, class_names = load_data(data_dir, img_height, img_width, batch_size=None)
         assert isinstance(dataset, tf.data.Dataset), "Le dataset n'est pas du bon type"
         print("Le dataset est du bon type")
         assert isinstance(class_names, list), "Les noms de classes ne sont pas dans une liste"
@@ -37,14 +35,14 @@ def test_load_data():
 
     # Test 2 : Chemin invalide
     try:
-        load_data("path/that/does/not/exist", img_height=45, img_width=45)
+        load_data("path/that/does/not/exist", img_height, img_width)
         print("Test 2 échoué : Une exception était attendue.")
     except Exception:
         print("Test 2 réussi.")
 
     # Test 3 : Structure incorrecte
     try:
-        dataset, class_names = load_data(data_bad, img_height=45, img_width=45)
+        dataset, class_names = load_data(data_bad, img_height, img_width)
         assert len(class_names) > 0, "Aucune classe trouvée"
         print("Test 3 réussi.")
     except Exception as e:
