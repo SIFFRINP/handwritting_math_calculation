@@ -12,7 +12,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 import matplotlib.pyplot as plt
-from scripts.config import image_path, model_path, class_names
+from scripts.config import image_path, model_path, class_names, img_height, img_width
 
 
 # INSTRUCTION = "8+4*10-3/2="
@@ -45,14 +45,18 @@ if __name__ == "__main__":
     model = tf.keras.models.load_model(model_path)
     print(f"Modèle chargé depuis : {model_path}")
 
-    # Chargement de l'image
-    image = load_img(image_path)
-    plt.imshow(image)
-    plt.axis('off')
-    plt.title("image avant pré-traitement")
-    plt.show()
+    # # Chargement de l'image
+    # image = load_img(image_path)
+    # plt.imshow(image)
+    # plt.axis('off')
+    # plt.title("image avant pré-traitement")
+    # plt.show()
 
-    image_clean = preprocess_image_main(image, 45, 45)
+    # image_clean = preprocess_image_main(image, 45, 45)
+
+    input_array = np.random.randint(0, 255, size=(45, 45, 3), dtype=np.uint8)  # Exemple de tableau
+    image_clean = preprocess_image_main(input_array, img_height, img_width)
+
 
     # _ TEST __________________________________________
     # plt.imshow(image_clean.numpy().squeeze(), cmap='gray')
