@@ -1,6 +1,8 @@
 import os
 
 
+DEBUG = True
+
 # * _ WINDOW ___________________________________________________________________
 USE_ABS_SIZE    = False
 W_BASE_WIDTH    = 1000
@@ -42,6 +44,10 @@ save_dir = "models"
 model_name="handwritten_math_calculator_model5.keras"
 # model_name="cnn_model_best.keras"
 class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
+
+# * _ MODEL ____________________________________________________________________
+MODEL_IMG_SIZE = 45 
+
 
 if __name__ == "__main__": 
     print("\x1b[33m~[WARNING] This script is not meant to be executed.\x1b[0m"); 
