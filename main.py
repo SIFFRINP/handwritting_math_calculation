@@ -36,34 +36,27 @@ if __name__ == "__main__":
     print(f"\t~ {INSTRUCTION}{result}")
 
 
-    # * _ INITIALISATIONS ______________________________________________________
+    # __ INITIALISATIONS ______________________________________________________
     pygame.init()
     window = Window()
     window.set_result_text(f"{INSTRUCTION}{result}")
-
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(project_root)
-
-    image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "OUI.png")
-    print(image_path)
-
-    model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model.keras")
-    print(model_path)
-
-    class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
 
     # Chargement du modèle
     model = tf.keras.models.load_model(model_path)
     print(f"Modèle chargé depuis : {model_path}")
 
-    # Chargement de l'image
-    image = load_img(image_path)
-    plt.imshow(image)
-    plt.axis('off')
-    plt.title("image avant pré-traitement")
-    plt.show()
+    # # Chargement de l'image
+    # image = load_img(image_path)
+    # plt.imshow(image)
+    # plt.axis('off')
+    # plt.title("image avant pré-traitement")
+    # plt.show()
 
-    image_clean = preprocess_image_main(image, 45, 45)
+    # image_clean = preprocess_image_main(image, 45, 45)
+
+    input_array = np.random.randint(0, 255, size=(45, 45, 3), dtype=np.uint8)  # Exemple de tableau
+    image_clean = preprocess_image_main(input_array, img_height, img_width)
+
 
     # _ TEST __________________________________________
     # plt.imshow(image_clean.numpy().squeeze(), cmap='gray')

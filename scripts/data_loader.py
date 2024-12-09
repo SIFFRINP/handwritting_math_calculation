@@ -1,9 +1,10 @@
 import os
 import tensorflow as tf
 import numpy as np
+from configuration import img_height, img_width, data_dir
 
 
-def load_data(data_dir, img_height=45, img_width=45, batch_size=None):
+def load_data(data_dir, img_height, img_width, batch_size=None):
     # Charger les données
     dataset = tf.keras.utils.image_dataset_from_directory(
         data_dir,

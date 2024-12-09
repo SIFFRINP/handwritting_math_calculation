@@ -1,73 +1,133 @@
 import os
 import tensorflow as tf
-from scripts.data_loader import load_data
-from scripts.preprocessing import preprocess_images, preprocess_dataset
-from scripts.model_builder import build_cnn_model, model_summary
-from scripts.model_trainer import compile_and_train, save_model
+import numpy as np
 import matplotlib.pyplot as plt
+from scripts.data_loader import load_data
+from scripts.preprocessing import preprocess_dataset
+from scripts.model_builder import build_cnn_model, model_summary
+from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
+from configuration import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Aller à la racine du projet
-print(project_root)
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
+
+# __ INITIALISATION __________________
+
 print(data_dir)
+dataset, class_names = load_data(data_dir, img_height, img_width)
 
 
-dataset, class_names = load_data(data_dir, img_height=45, img_width=45, batch_size=None)
-# for image, label in dataset.take(5):
-#     print(f"Image shape : {image.shape}, Étiquette : {label}")
-
-
-# Spliter les données brutes
-# total_size = len(list(dataset))  # Calculer le nombre total d'exemples
 total_size = tf.data.experimental.cardinality(dataset).numpy()
-
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement
 val_size = total_size - train_size
-
 
 train_dataset = dataset.take(train_size)
 val_dataset = dataset.skip(train_size)
 
 
-# print(f"Total d'exemples : {total_size}")
-# print(f"Exemples dans train_dataset : {len(list(train_dataset))}")
-# print(f"Exemples dans val_dataset : {len(list(val_dataset))}")
+assert tf.data.experimental.cardinality(train_dataset).numpy() == train_size, "Le dataset d'entraînement n'a pas la bonne taille"
+print("Le dataset d'entraînement a la bonne taille")
+assert tf.data.experimental.cardinality(val_dataset).numpy() == val_size, "Le dataset de validation n'a pas la bonne taille"
+print("Le dataset de validation a la bonne taille")
 
 
-# Appliquer le prétraitement à chaque ensemble
-train_ds = preprocess_dataset(train_dataset, batch_size=32)
-val_ds = preprocess_dataset(val_dataset, batch_size=32)
+train_ds = preprocess_dataset(train_dataset, batch_size, augment=True)
+val_ds = preprocess_dataset(val_dataset, batch_size, augment=False)
 
 
-# Afficher un aperçu pour valider le prétraitement
-
-# counter = 0
-# for image_batch, label_batch in train_ds.take(1):
-#     counter += len(image_batch)
-#     print(f"Shape du batch d'images (train) : {image_batch.shape}")
-#     print(f"Shape du batch d'étiquettes (train) : {label_batch.shape}")
-#     print(f"Valeurs min/max des images dans le batch : {tf.reduce_min(image_batch).numpy()}, {tf.reduce_max(image_batch).numpy()}")
-#     for i in range(5):  # Visualiser 5 images
-#         plt.imshow(image_batch[i].numpy().squeeze(), cmap='gray')
-#         plt.title(f"Classe réelle : {class_names[label_batch[i].numpy()]}")
-#         plt.axis('off')
-#         plt.show()
-# print(f"Nombre total d'images dans le batch traité : {counter}")
-
-
+input_shape = (45, 45, 1)
 num_classes = len(class_names)
-# print("num_classes : ",num_classes)
-model = build_cnn_model(num_classes=num_classes, input_shape=(45, 45, 1))
+print("num_classes : ", num_classes)
+model = build_cnn_model(num_classes=num_classes, input_shape=input_shape)
+
+
 print("Résumé du modèle :")
 model_summary(model)
 
 
-# Entraîner le modèle
-history = compile_and_train(model, train_ds, val_ds, epochs=15, learning_rate=0.001)
+# __ TESTS __________________
 
-# # Afficher les métriques
-# print(f"Historique des pertes : {history.history['loss']}")
-# print(f"Historique des précisions : {history.history['accuracy']}")
+
+# Afficher les détails du modèle
+print("\n=== Vérification du modèle ===")
+print(f"Forme d'entrée : {model.input_shape}")
+print(f"Forme de sortie : {model.output_shape}")
+print(f"Nombre total de couches : {len(model.layers)}")
+for i, layer in enumerate(model.layers):
+    print(f"Couche {i} - Type : {type(layer).__name__}")
+    if hasattr(layer, 'output_shape'):
+        print(f"  - Forme de sortie : {layer.output_shape}")
+        
+
+
+# Calcul des poids de classes
+class_counts = {'+': 25112, '-': 33997, '0': 6914, '1': 26520, '2': 26141, 
+                '3': 10909, '4': 7396, '5': 3545, '6': 3118, '7': 2909, 
+                '8': 3068, '9': 3737, '=': 13104}
+total_images = sum(class_counts.values())
+class_weights = {i: total_images / count for i, count in enumerate(class_counts.values())}
+print("Poids des classes : ", class_weights)
+
+
+# Étape 5 : Compilation et entraînement
+print("\n=== Compilation et entraînement ===")
+history = compile_and_train(
+    model,
+    train_ds,
+    val_ds,
+    epochs=epochs,
+    learning_rate=learning_rate,
+    class_weight=class_weights
+)
+
+
+# Vérifier les métriques par classe
+print("\n=== Vérification des métriques par classe ===")
+evaluate_metrics_per_class(model, val_ds, class_names)
+
+# Observer la confusion matrix
+plot_confusion_matrix(model, val_ds, class_names)
+
+
+# Vérification des résultats
+print("\n=== Résultats de l'entraînement ===")
+print(f"Historique des pertes : {history.history['loss']}")
+assert history.history['loss'][-1] < history.history['loss'][0], "La perte ne diminue pas"
+print("La perte diminue")
+print(f"Historique de l'accuracy : {history.history['accuracy']}")
+assert history.history['accuracy'][-1] > history.history['accuracy'][0], "L'accuracy n'augmente pas"
+print("L'accuracy augmente")
+
+
+
+# Récupérer les données d'entraînement et validation
+train_loss = history.history['loss']
+val_loss = history.history['val_loss']
+train_accuracy = history.history['accuracy']
+val_accuracy = history.history['val_accuracy']
+
+
+# Afficher les métriques sur chaque époque
+print("=== Évolution des métriques sur les époques ===")
+for i in range(len(train_loss)):
+    print(f"Époque {i+1}:")
+    print(f"  Perte - Entraînement : {train_loss[i]:.4f}, Validation : {val_loss[i]:.4f}")
+    print(f"  Accuracy - Entraînement : {train_accuracy[i]:.4f}, Validation : {val_accuracy[i]:.4f}")
+
+
+plt.plot(train_loss, label='Perte - Entraînement')
+plt.plot(val_loss, label='Perte - Validation')
+plt.legend()
+plt.title('Courbe de perte')
+plt.show()
+
+plt.plot(train_accuracy, label='Accuracy - Entraînement')
+plt.plot(val_accuracy, label='Accuracy - Validation')
+plt.legend()
+plt.title('Courbe d\'accuracy')
+plt.show()
+
+
+print("=== Tests de model_trainer.py terminés avec succès ===")
+
 
 # Sauvegarder le modèle
-save_model(model, model_name="handwritten_math_calculator_model.keras", save_dir="models")
+save_model(model, model_name, save_dir)
