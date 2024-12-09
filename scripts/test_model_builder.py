@@ -3,7 +3,7 @@ import tensorflow as tf
 from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model, model_summary
-from scripts.config import data_dir, img_width, img_height
+from configuration import data_dir, img_width, img_height
 
 # __ INITIALISATION __________________
 

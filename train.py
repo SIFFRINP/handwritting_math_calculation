@@ -6,7 +6,7 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model, model_summary
 from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
-from scripts.config import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
+from configuration import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
 
 
 # __ INITIALISATION __________________

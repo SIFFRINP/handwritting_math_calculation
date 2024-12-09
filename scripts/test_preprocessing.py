@@ -4,7 +4,7 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 from PIL import Image
 import numpy as np
-from scripts.config import data_dir, img_height, img_width, batch_size
+from configuration import data_dir, img_height, img_width, batch_size
 
 # __ INITIALISATION __________________
 

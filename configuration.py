@@ -28,6 +28,20 @@ AVAILABLE_OPERATOR  = "+-*/"
 PRIORITY_OPERATOR   = "*/"
 END_EXPRESSION_CHAR = "="
 
+# * _ AI _______________________________________________________________________
+img_height = 45
+img_width = 45
+batch_size = 32
+epochs = 15
+learning_rate = 0.001
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
+image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "NONN.png")
+model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model4.keras")
+save_dir = "models"
+model_name="handwritten_math_calculator_model5.keras"
+# model_name="cnn_model_best.keras"
+class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
 
 if __name__ == "__main__": 
     print("\x1b[33m~[WARNING] This script is not meant to be executed.\x1b[0m"); 

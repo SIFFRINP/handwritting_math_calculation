@@ -1,10 +1,10 @@
 import os
-# os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
-# import pygame
-# from functions import *
-# from configuration import * 
-# from classes import Window
+import pygame
+from functions import *
+from configuration import * 
+from classes import Window
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.utils import load_img, img_to_array
@@ -12,34 +12,33 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 import matplotlib.pyplot as plt
-from scripts.config import image_path, model_path, class_names, img_height, img_width
 
 
-# INSTRUCTION = "8+4*10-3/2="
-# RESULT      = 46.5
+INSTRUCTION = "8+4*10-3/2="
+RESULT      = 46.5
 
 
 if __name__ == "__main__":
-    # print("BASE INSTRUCTION: ")
-    # print(f"\t~ inst: {INSTRUCTION}")
+    print("BASE INSTRUCTION: ")
+    print(f"\t~ inst: {INSTRUCTION}")
 
-    # numbers, operators = separate_instructions(INSTRUCTION)
-    # print("\nPARSING RESULT: ")
-    # print(f"\t~ nb_parsing: {numbers}")
-    # print(f"\t~ op_parsing: {operators}")
+    numbers, operators = separate_instructions(INSTRUCTION)
+    print("\nPARSING RESULT: ")
+    print(f"\t~ nb_parsing: {numbers}")
+    print(f"\t~ op_parsing: {operators}")
 
-    # result = perform_calc(numbers, operators)
-    # print("\nCALCULATION RESULT: ")
-    # print(f"\t= {result} ?= {RESULT} | {"✅" if (RESULT == result) else "❌"}")
+    result = perform_calc(numbers, operators)
+    print("\nCALCULATION RESULT: ")
+    print(f"\t= {result} ?= {RESULT} | {"✅" if (RESULT == result) else "❌"}")
 
-    # print("\nFINAL STRING RESULT: ")
-    # print(f"\t~ {INSTRUCTION}{result}")
+    print("\nFINAL STRING RESULT: ")
+    print(f"\t~ {INSTRUCTION}{result}")
 
 
-    # * _ INITIALISATIONS ______________________________________________________
-    # pygame.init()
-    # window = Window()
-    # window.set_result_text(f"{INSTRUCTION}{result}")
+    # __ INITIALISATIONS ______________________________________________________
+    pygame.init()
+    window = Window()
+    window.set_result_text(f"{INSTRUCTION}{result}")
 
     # Chargement du modèle
     model = tf.keras.models.load_model(model_path)
@@ -74,11 +73,11 @@ if __name__ == "__main__":
 
     print(f"Le symbole prédit est : {predicted_class} avec une confiance de {confidence:.2f}%")
 
-    # # * _ MAIN LOOP ____________________________________________________________
-    # while window.get_running_state():
-    #     try: 
-    #         window.update()
+    # * _ MAIN LOOP ____________________________________________________________
+    while window.get_running_state():
+        try: 
+            window.update()
 
-    #     except KeyboardInterrupt: 
-    #         print("\x1b[1m\x1b[32mGoodbye :)\x1b[0m\n")
-    #         break
+        except KeyboardInterrupt: 
+            print("\x1b[1m\x1b[32mGoodbye :)\x1b[0m\n")
+            break

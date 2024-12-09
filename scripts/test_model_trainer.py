@@ -6,7 +6,7 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model
 from scripts.model_trainer import compile_and_train, save_model
-from scripts.config import epochs, learning_rate, data_dir, img_height, img_width
+from configuration import epochs, learning_rate, data_dir, img_height, img_width
 
 
 

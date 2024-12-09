@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 from scripts.data_loader import load_data
-from scripts.config import img_height, img_width, data_dir, project_root
+from configuration import img_height, img_width, data_dir, project_root
 
 print("chemin data_dir : ", data_dir)
 data_bad = os.path.join(project_root, "handwritting_math_calculation", "images")
