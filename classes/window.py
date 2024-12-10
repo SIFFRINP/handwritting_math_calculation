@@ -1,10 +1,12 @@
 from configuration import *
-from classes.text import Text
 from datetime import datetime
-import pygame
 from PIL import Image
+import pygame
 import numpy
+import time
 import cv2
+
+from classes.text import Text
 
 
 class Window:
@@ -53,10 +55,11 @@ class Window:
         # Mouse state. 
         self.mouse_is_pressed = False
         self.last_saved_pen_pos = -1, -1
+        self.last_input_ts = -1
 
         # Texts
         self.calculus_text = Text("~")
-        self.error_text = Text("", ERROR_COLOR)
+        self.error_text = Text("", PEN_COLOR)
 
         self.constant_texts = [
             Text("press [q] to clear the renderer. "), 
@@ -182,7 +185,14 @@ class Window:
     
 
     def get_mouse_pressed(self) -> bool: 
-        return self.mouse_is_pressed
+        if (self.mouse_is_pressed): 
+            self.last_input_ts = time.time()
+            return True
+        
+        if (time.time() - self.last_input_ts < DETECTION_WAIT_TIME):
+            return True
+         
+        return False
 
 
     def get_draw_area_pxl_array(self, flip: bool = False) -> numpy.ndarray:
@@ -202,7 +212,7 @@ class Window:
     
 
     def set_error_text(self, new_text: str): 
-        self.error_text.set_text("~[ERROR] " + new_text)
+        self.error_text.set_text("~" + new_text)
         return 
 
 # * _ STATIC FUNCTIONS _________________________________________________________

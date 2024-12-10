@@ -6,14 +6,14 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model
 from scripts.model_trainer import compile_and_train, save_model
-from configuration import epochs, learning_rate, data_dir, img_height, img_width
+from configuration import EPOCHS, learning_rate, DATA_DIR, IMG_HEIGHT, IMG_WIDTH
 
 
 
 # __ INITIALISATION __________________
 
-print(data_dir)
-dataset, class_names = load_data(data_dir, img_height, img_width)
+print(DATA_DIR)
+dataset, class_names = load_data(DATA_DIR, IMG_HEIGHT, IMG_WIDTH)
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement

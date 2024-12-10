@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from scripts.model_builder import build_cnn_model
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from configuration import epochs, learning_rate, model_name, save_dir
+from configuration import EPOCHS, learning_rate, MODEL_NAME, SAVE_DIR
 
 
 def compile_and_train(model, train_ds, val_ds, epochs, learning_rate, class_weight=None):
