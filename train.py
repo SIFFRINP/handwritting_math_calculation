@@ -1,15 +1,23 @@
-import os
 import tensorflow as tf
-import numpy as np
 import matplotlib.pyplot as plt
 from scripts.data_loader import load_data
-from scripts.preprocessing import preprocess_dataset
+from scripts.preprocessing import preprocess_dataset, print_dataset_distribution, downsample_classes, augment_classes, data_augmentation
 from scripts.model_builder import build_cnn_model, model_summary
 from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
 from configuration import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
 
 
 # __ INITIALISATION __________________
+
+print("Avant downsampling et augmentation :")
+print_dataset_distribution(data_dir)
+
+downsample_classes(data_dir, target_size=10000)
+augment_classes(data_dir, target_size=10000, augment_function=data_augmentation)
+
+print("Après downsampling et augmentation :")
+print_dataset_distribution(data_dir)
+
 
 print(data_dir)
 dataset, class_names = load_data(data_dir, img_height, img_width)
@@ -55,16 +63,7 @@ for i, layer in enumerate(model.layers):
     print(f"Couche {i} - Type : {type(layer).__name__}")
     if hasattr(layer, 'output_shape'):
         print(f"  - Forme de sortie : {layer.output_shape}")
-        
 
-
-# Calcul des poids de classes
-class_counts = {'+': 25112, '-': 33997, '0': 6914, '1': 26520, '2': 26141, 
-                '3': 10909, '4': 7396, '5': 3545, '6': 3118, '7': 2909, 
-                '8': 3068, '9': 3737, '=': 13104}
-total_images = sum(class_counts.values())
-class_weights = {i: total_images / count for i, count in enumerate(class_counts.values())}
-print("Poids des classes : ", class_weights)
 
 
 # Étape 5 : Compilation et entraînement
@@ -74,14 +73,15 @@ history = compile_and_train(
     train_ds,
     val_ds,
     epochs=epochs,
-    learning_rate=learning_rate,
-    class_weight=class_weights
+    learning_rate=learning_rate
 )
 
 
 # Vérifier les métriques par classe
 print("\n=== Vérification des métriques par classe ===")
-evaluate_metrics_per_class(model, val_ds, class_names)
+# evaluate_metrics_per_class(model, val_ds, class_names)
+evaluate_metrics_per_class(model, val_ds, class_names, show_errors=True)
+
 
 # Observer la confusion matrix
 plot_confusion_matrix(model, val_ds, class_names)
