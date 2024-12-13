@@ -11,14 +11,6 @@ data_augmentation = tf.keras.Sequential([
     tf.keras.layers.RandomZoom(0.2),
 ])
 
-# data_augmentation = tf.keras.Sequential([
-#     tf.keras.layers.RandomFlip("horizontal_and_vertical"),  # Ajoute un flip vertical
-#     tf.keras.layers.RandomRotation(0.4),  # Augmente l'amplitude de rotation
-#     tf.keras.layers.RandomZoom(height_factor=(-0.3, 0.3), width_factor=(-0.3, 0.3)),  # Zoom plus large
-#     tf.keras.layers.RandomTranslation(0.2, 0.2),  # Décalages horizontaux et verticaux
-#     tf.keras.layers.RandomContrast(0.2)  # Ajoute des variations de contraste
-# ])
-
 
 def preprocess_images(image, label):
     image = tf.image.rgb_to_grayscale(image)

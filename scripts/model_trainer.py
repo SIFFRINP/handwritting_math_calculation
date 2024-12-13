@@ -3,10 +3,10 @@ import os
 import matplotlib.pyplot as plt
 from scripts.model_builder import build_cnn_model
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from configuration import EPOCHS, learning_rate, MODEL_NAME, SAVE_DIR
+from configuration import EPOCHS, LEARNING_RATE, MODEL_NAME, SAVE_DIR
 
 
-def compile_and_train(model, train_ds, val_ds, epochs, learning_rate, class_weight=None):
+def compile_and_train(model, train_ds, val_ds, epochs, learning_rate):
     # Préparation du modèle
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
@@ -16,15 +16,15 @@ def compile_and_train(model, train_ds, val_ds, epochs, learning_rate, class_weig
 
     # Callbacks
     callbacks = [
-        tf.keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True),
+        tf.keras.callbacks.EarlyStopping(patience=4, restore_best_weights=True),
         tf.keras.callbacks.ModelCheckpoint("cnn_model_best.keras", save_best_only=True),
-        # tf.keras.callbacks.ReduceLROnPlateau(
-        #     monitor="val_loss",  # Métrique à surveiller
-        #     factor=0.5,          # Divise le learning_rate par 2
-        #     patience=2,          # Réduit après 2 époques sans amélioration
-        #     min_lr=1e-6,         # Learning rate minimal
-        #     verbose=1            # Affiche un message lors de la réduction
-        # )
+        tf.keras.callbacks.ReduceLROnPlateau(
+            monitor="val_loss",  # Métrique à surveiller
+            factor=0.5,          # Divise le learning_rate par 2
+            patience=4,          # Réduit après 2 époques sans amélioration
+            min_lr=1e-6,         # Learning rate minimal
+            verbose=1            # Affiche un message lors de la réduction
+        )
     ]
 
     # Entraînement
@@ -33,8 +33,7 @@ def compile_and_train(model, train_ds, val_ds, epochs, learning_rate, class_weig
         validation_data=val_ds,
         epochs=epochs,
         callbacks=callbacks,
-        verbose=1,
-        class_weight=class_weight
+        verbose=1
     )
 
     return history

@@ -17,13 +17,13 @@ W_NAME          = "handwritting_math_calculation"
 W_ICON_PATH     = os.path.join("icons", "icon.png")
 CALCULUS_HEIGHT = 65
 
-# * _ DRAW AREA ________________________________________________________________
-PEN_WIDTH           = 10
-DETECTION_WAIT_TIME = .5
-
 # * _ TEXT _____________________________________________________________________
 FONT_PATH = os.path.join("fonts", "math.ttf")
 FONT_SIZE = 100
+
+# * _ DRAW AREA ________________________________________________________________
+PEN_WIDTH           = 3
+DETECTION_WAIT_TIME = .5
 
 # * _ COLORS ___________________________________________________________________
 BACKGROUND_COLOR   = (211, 211, 211)
@@ -33,8 +33,8 @@ TEXT_COLOR         = (0  , 0  , 0  )
 ERROR_COLOR        = (156, 69 , 79 )
 
 # * _ PARSER ___________________________________________________________________
-AVAILABLE_OPERATOR  = "+-*/"
-PRIORITY_OPERATOR   = "*/"
+AVAILABLE_OPERATOR  = "+-×÷"
+PRIORITY_OPERATOR   = "×÷"
 END_EXPRESSION_CHAR = "="
 
 # * _ AI PARAMETERS ____________________________________________________________
@@ -44,12 +44,12 @@ BATCH_SIZE    = 32
 EPOCHS        = 15
 LEARNING_RATE = 0.001
 PROJECT_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR      = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "data", "extracted_images_sort")
+DATA_DIR      = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "data", "symbols")
 IMAGE_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "images", "NONN.png")
-MODEL_NAME    = "handwritten_math_calculator_model4.keras"
+MODEL_NAME    = "handwritten_math_calculator_model13.keras"
 MODEL_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "models", MODEL_NAME)
 SAVE_DIR      = "models"
-CLASS_NAMES   = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
+CLASS_NAMES   = ["+", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "="]
 
 # * _ ANSI COLOR _______________________________________________________________
 WARNING = "\x1b[33m"

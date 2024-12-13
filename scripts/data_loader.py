@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 import numpy as np
-from configuration import IMG_HEIGHT, img_width, data_dir
+from configuration import IMG_HEIGHT, IMG_WIDTH, DATA_DIR
 
 
 def load_data(data_dir, img_height, img_width, batch_size=None):

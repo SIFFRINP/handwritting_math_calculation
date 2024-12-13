@@ -144,9 +144,9 @@ def perform_priority_calc(number_list: list, operator_list: list):
         nb = number_list.pop(i + 1)
 
         match (operator):
-            case "*": 
+            case "×": 
                 number_list[i] *= nb
-            case "/": 
+            case "÷": 
                 number_list[i] /= nb
     
     return

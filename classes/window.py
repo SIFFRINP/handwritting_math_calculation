@@ -96,7 +96,7 @@ class Window:
 
         # Draw a circle at the beginning to smooth out the pen. 
         else: 
-            pygame.draw.circle(self.draw_area, PEN_COLOR, mouse_coords, 5) 
+            pygame.draw.circle(self.draw_area, PEN_COLOR, mouse_coords, PEN_WIDTH / 2) 
 
         self.last_saved_pen_pos = mouse_coords
         return
@@ -105,6 +105,7 @@ class Window:
     # * Clear the drawing area. 
     def clear_draw_area(self):
         self.draw_area.fill(DRAWING_AREA_COLOR)
+        self.set_result_text("")
         return
 
 

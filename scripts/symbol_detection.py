@@ -23,7 +23,7 @@ def get_symbol_bounding(img: np.ndarray) -> list:
 
     # Dilate the image on the y axis to be able to detect 2 or more part symbol 
     # like - and /. 
-    kernel = np.ones((IMG_HEIGHT * 2, 1), np.uint8) 
+    kernel = np.ones((IMG_HEIGHT, 1), np.uint8) 
     dilated = cv2.dilate(thresh_img, kernel, iterations=1)
     
     # Perform the contour detection. 
@@ -34,9 +34,9 @@ def get_symbol_bounding(img: np.ndarray) -> list:
         # Append every contour to the bounding_boxes list. 
         x, y, w, h = cv2.boundingRect(contour)
 
-        if (w < IMG_WIDTH and h < IMG_HEIGHT): 
-            continue
-
+        # if (w < IMG_WIDTH and h < IMG_HEIGHT): 
+            # continue
+         
         bounding_boxes.append((x, y, w, h))
 
         # Add rectangle to show bounding box in debug mode. 
@@ -46,18 +46,8 @@ def get_symbol_bounding(img: np.ndarray) -> list:
     # Show each symbol on separate window in debug mode. 
     if DEBUG == 2: 
         cv2.imshow("Fusion via dilatation", output) 
-        cv2.imshow("dilated img", dilated) 
+        # cv2.imshow("dilated img", dilated) 
 
-    return bounding_boxes
-
-
-def bounding_box_sorting(bounding_boxes: list) -> list:
-    """
-    
-
-    :param bounding_boxes: _description_
-    :return: _description_
-    """
     return bounding_boxes
 
 
@@ -78,13 +68,63 @@ def pixels_isolation(img: np.ndarray, bounding_boxes: list):
     # Retrieve each region from the images. 
     for i, box in enumerate(bounding_boxes): 
         x, y, w, h = box
-        cropped_region = cv2.resize(img[y:y+h, x:x+w], (45, 45))
-        regions[i] = cropped_region
+        
+        resized_region = resize_with_aspect_ratio(img[y:y+h, x:x+w], IMG_HEIGHT, IMG_WIDTH)
+
+        # Check if the resize went well. 
+        if (resized_region is None): 
+            continue
+
+#        _, resized_region = cv2.threshold(resized_region, 127, 255, cv2.THRESH_BINARY)
+        # Append the resized region to the regions list. 
+        regions[i] = resized_region
 
         if DEBUG == 2:
-            cv2.imshow(f"{i}", cropped_region)
+            cv2.imshow(f"{i}", cv2.resize(resized_region, (100, 100)))
 
     return regions
+
+
+
+def resize_with_aspect_ratio(img, target_height, target_width):
+    """
+    Resize region by keeping aspect ratio. 
+
+    :param img: image that need to be resized. 
+    :param target_width: the width of the resized image. 
+    :param target_height: the height of the resized image. 
+    :return: resized image. 
+    """
+    h, w = img.shape[:2]
+
+    if (h <= 0 or w <= 0): 
+        return None
+    
+    aspect_ratio = w / h
+
+    # Check if the image width is larger than the height and calculate new 
+    # width and height accordingly.  
+    if aspect_ratio > 1:
+        new_width = target_width
+        new_height = int(target_width / aspect_ratio)
+    else:
+        new_height = target_height
+        new_width = int(target_height * aspect_ratio)
+    
+    # Resize the image using the calculated width and height, keeping the 
+    # aspect ratio. 
+    resized_img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+    
+    # Create a blank image with targeted width and height. 
+    canvas = np.full((target_height, target_width), 255, dtype=np.uint8)
+    
+    # Paste the resized image onto the blank canvas and calculate the x and y 
+    # offset to center it. 
+    x_offset = (target_width - new_width) // 2 
+    y_offset = (target_height - new_height) // 2 
+    canvas[y_offset:y_offset + new_height, x_offset:x_offset + new_width] = resized_img 
+    
+    return canvas
 
 
 
