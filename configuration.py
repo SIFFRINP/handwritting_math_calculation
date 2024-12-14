@@ -37,13 +37,14 @@ batch_size = 32
 epochs = 20
 learning_rate = 0.00015
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
+data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort2")
 image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "NONN.png")
 model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model4.keras")
 save_dir = "models"
-model_name="handwritten_math_calculator_model13.keras"
+model_name="handwritten_math_calculator_model14.keras"
 # model_name="cnn_model_best.keras"
-class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
+# class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
+class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=', 'div', 'x']
 
 # * _ MODEL ____________________________________________________________________
 MODEL_IMG_SIZE = 45 
