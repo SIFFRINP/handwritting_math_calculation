@@ -62,26 +62,9 @@ if __name__ == "__main__":
         instruction = ""
 
         for region in regions:
-            # image_clean = preprocess_image_main(region, IMG_HEIGHT, IMG_WIDTH)
-
-            # # Predict the drawing. 
-            # predictions = model.predict(image_clean, verbose=0)
-            # predicted_class = CLASS_NAMES[np.argmax(predictions, axis=1)[0]]
-    
-            # # Append the predicted symbol to the instruction. 
-            # instruction += predicted_class
-
-            # Étape 1 : Prétraitement de l'image
             image_clean = preprocess_image_main(region, IMG_HEIGHT, IMG_WIDTH)
 
-            # Étape 2 : Vérification du tableau de pixels prétraité
-            if not (np.min(image_clean) >= 0.0 and np.max(image_clean) <= 1.0):
-                raise ValueError(
-                    f"Image mal normalisée : valeurs attendues dans [0.0, 1.0], "
-                    f"reçu = min={np.min(image_clean)}, max={np.max(image_clean)}"
-                )
-
-            # Étape 3 : Prédiction
+            # Predict the region. 
             predictions = model.predict(image_clean, verbose=0)
             predicted_class = CLASS_NAMES[np.argmax(predictions, axis=1)[0]]
 

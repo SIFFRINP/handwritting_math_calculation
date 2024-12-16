@@ -5,17 +5,19 @@ import os
 # - 2: Images processing debug. 
 DEBUG = 1
 
+
 def DEBUG_PRINT(message: str): 
     if DEBUG: 
         print(message)
 
 # * _ WINDOW ___________________________________________________________________
-USE_ABS_SIZE    = False
-W_BASE_WIDTH    = 1000
-W_BASE_HEIGHT   = 400
-W_NAME          = "handwritting_math_calculation" 
-W_ICON_PATH     = os.path.join("icons", "icon.png")
-CALCULUS_HEIGHT = 65
+USE_ABS_SIZE     = False
+W_BASE_WIDTH     = 1000
+W_BASE_HEIGHT    = 400
+W_NAME           = "handwritting_math_calculation" 
+W_ICON_PATH      = os.path.join("icons", "icon.png")
+CALCULUS_HEIGHT  = 65
+TEXT_Y_SPACEMENT = 17
 
 # * _ TEXT _____________________________________________________________________
 FONT_PATH = os.path.join("fonts", "math.ttf")
@@ -23,7 +25,7 @@ FONT_SIZE = 100
 
 # * _ DRAW AREA ________________________________________________________________
 PEN_WIDTH           = 3
-DETECTION_WAIT_TIME = .5
+DETECTION_WAIT_TIME = 1
 
 # * _ COLORS ___________________________________________________________________
 BACKGROUND_COLOR   = (211, 211, 211)
