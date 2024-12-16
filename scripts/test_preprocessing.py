@@ -4,13 +4,13 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_images, preprocess_dataset, preprocess_image_main
 from PIL import Image
 import numpy as np
-from configuration import data_dir, img_height, img_width, batch_size
+from configuration import DATA_DIR, IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE
 
 # __ INITIALISATION __________________
 
 
-print(data_dir)
-dataset, class_names = load_data(data_dir, img_height, img_width)
+print(DATA_DIR)
+dataset, class_names = load_data(DATA_DIR, IMG_HEIGHT, IMG_WIDTH)
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement
@@ -44,7 +44,7 @@ for image, label in test_subset.take(1):
 # __ TEST POUR PREPROCESS_DATASET ____________________
 
 print("\n=== Test pour preprocess_dataset ===")
-preprocessed_dataset = preprocess_dataset(test_subset, batch_size)
+preprocessed_dataset = preprocess_dataset(test_subset, BATCH_SIZE)
 for batch_images, batch_labels in preprocessed_dataset.take(1):
     print(f"Batch images shape : {batch_images.shape}, Batch labels : {batch_labels}")
     print(f"Valeurs min/max dans le batch : {batch_images.numpy().min()} / {batch_images.numpy().max()}")
@@ -60,7 +60,7 @@ for batch_images, batch_labels in preprocessed_dataset.take(1):
 print("\n=== Test pour preprocess_image_main ===")
 # Créer une image de test
 test_image = Image.fromarray(np.random.randint(0, 255, (60, 60, 3), dtype=np.uint8))
-processed_image = preprocess_image_main(test_image, img_height, img_width)
+processed_image = preprocess_image_main(test_image, IMG_HEIGHT, IMG_WIDTH)
 print(f"Image après traitement shape : {processed_image.shape}")
 print(f"Valeurs min/max après traitement : {processed_image.numpy().min()} / {processed_image.numpy().max()}")
 print(f"Image après traitement (valeurs) :")

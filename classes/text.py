@@ -1,6 +1,5 @@
-import pygame
-
 from configuration import *
+import pygame
 
 
 class Text:

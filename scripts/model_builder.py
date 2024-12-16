@@ -2,7 +2,7 @@ from tensorflow.keras import layers, models
 from tensorflow.keras import regularizers
 
 
-def build_cnn_model(num_classes, input_shape=(45, 45, 1)):
+def build_cnn_model(num_classes, input_shape=(28, 28, 1)):
     model = models.Sequential([
 
         # Première couche de convolution

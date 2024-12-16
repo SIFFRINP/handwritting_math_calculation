@@ -1,10 +1,12 @@
 from configuration import *
-from classes.text import Text
 from datetime import datetime
-import pygame
 from PIL import Image
+import pygame
 import numpy
+import time
 import cv2
+
+from classes.text import Text
 
 
 class Window:
@@ -53,19 +55,25 @@ class Window:
         # Mouse state. 
         self.mouse_is_pressed = False
         self.last_saved_pen_pos = -1, -1
+        self.last_input_ts = -1
+
+        # Undo queue.
+        self.undo_queue = []
 
         # Texts
         self.calculus_text = Text("~")
-        self.error_text = Text("", ERROR_COLOR)
+        self.error_text = Text("", PEN_COLOR)
 
         self.constant_texts = [
-            Text("press [q] to clear the renderer. "), 
             Text("press [esc] to exit the program. "), 
+            Text("press [q] to clear the renderer. "), 
+            Text("press [ctrl+z] to undo. "), 
         ]
 
         self.constant_texts_coords = [
             (5, 0), 
-            (5, 17), 
+            (5, 1 * TEXT_Y_SPACEMENT), 
+            (5, 2 * TEXT_Y_SPACEMENT), 
         ]
 
         set_window_attributes()
@@ -80,7 +88,7 @@ class Window:
             return
         
         mouse_coords = pygame.mouse.get_pos()
-        
+
         # Check if there is a last saved pen position. 
         if self.last_saved_pen_pos[0] > -1 or self.last_saved_pen_pos[1] > -1:
             pygame.draw.line(
@@ -93,7 +101,9 @@ class Window:
 
         # Draw a circle at the beginning to smooth out the pen. 
         else: 
-            pygame.draw.circle(self.draw_area, PEN_COLOR, mouse_coords, 5) 
+            # If the pen has just been raised, safe the image to undo queue. 
+            self.save_drawing_buffer()
+            pygame.draw.circle(self.draw_area, PEN_COLOR, mouse_coords, PEN_WIDTH / 2) 
 
         self.last_saved_pen_pos = mouse_coords
         return
@@ -101,9 +111,29 @@ class Window:
 
     # * Clear the drawing area. 
     def clear_draw_area(self):
+        self.save_drawing_buffer()
         self.draw_area.fill(DRAWING_AREA_COLOR)
+        self.set_result_text("")
+        return
+    
+
+    # * Save the current buffer to the undo queue to restore it later. 
+    def save_drawing_buffer(self):
+        if (len(self.undo_queue) > 25): 
+            self.undo_queue.pop(0)
+ 
+        self.undo_queue.append(self.draw_area.copy())
         return
 
+
+    # * Restore the previous state of the drawing buffer to the screen. 
+    def restore_previous_drawing(self): 
+        if (not self.undo_queue):
+            return
+        
+        self.draw_area.blit(self.undo_queue.pop(), (0, 0))
+        self.last_input_ts = time.time() + DETECTION_WAIT_TIME
+        return
 
 
     # * Render the window element onto the main surface. 
@@ -153,17 +183,23 @@ class Window:
             if event.type == pygame.QUIT:
                 self.is_running = False
             
-            # Clear the drawing area surface. 
             elif event.type == pygame.KEYDOWN:
+                # Clear the drawing area surface. 
                 if event.key == pygame.K_q:
                     self.clear_draw_area()
+
+                # Undo keypress detection. 
+                elif event.key == pygame.K_z:
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+                        self.restore_previous_drawing()
                 
                 # Close the program. 
-                if event.key == pygame.K_ESCAPE: 
+                elif event.key == pygame.K_ESCAPE: 
                     self.is_running = False
 
                 # Save the drawing on the screen. 
-                if event.key == pygame.K_s: 
+                elif event.key == pygame.K_s: 
                     if (not os.path.isdir("saved_drawing")): 
                         print("~[ERROR] saved_drawing directory don't exist.")
                         return
@@ -182,7 +218,14 @@ class Window:
     
 
     def get_mouse_pressed(self) -> bool: 
-        return self.mouse_is_pressed
+        if (self.mouse_is_pressed): 
+            self.last_input_ts = time.time()
+            return True
+        
+        if (time.time() - self.last_input_ts < DETECTION_WAIT_TIME):
+            return True
+         
+        return False
 
 
     def get_draw_area_pxl_array(self, flip: bool = False) -> numpy.ndarray:
@@ -202,7 +245,7 @@ class Window:
     
 
     def set_error_text(self, new_text: str): 
-        self.error_text.set_text("~[ERROR] " + new_text)
+        self.error_text.set_text("~" + new_text)
         return 
 
 # * _ STATIC FUNCTIONS _________________________________________________________
