@@ -46,10 +46,11 @@ LEARNING_RATE = 0.001
 PROJECT_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR      = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "data", "symbols")
 IMAGE_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "images", "NONN.png")
-MODEL_NAME    = "handwritten_math_calculator_model13.keras"
+MODEL_NAME    = "handwritten_math_calculator_model14.keras"
 MODEL_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "models", MODEL_NAME)
 SAVE_DIR      = "models"
-CLASS_NAMES   = ["+", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "="]
+CLASS_NAMES   = ["+", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '÷', '×']
+# 
 
 # * _ ANSI COLOR _______________________________________________________________
 WARNING = "\x1b[33m"
