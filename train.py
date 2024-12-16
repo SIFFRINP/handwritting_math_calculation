@@ -6,13 +6,13 @@ from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model, model_summary
 from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
-from configuration import data_dir, img_width, img_height, batch_size, epochs, learning_rate, save_dir, model_name
+from configuration import DATA_DIR, IMG_WIDTH, IMG_HEIGHT, BATCH_SIZE, EPOCHS, learning_rate, SAVE_DIR, MODEL_NAME
 
 
 # __ INITIALISATION __________________
 
-print(data_dir)
-dataset, class_names = load_data(data_dir, img_height, img_width)
+print(DATA_DIR)
+dataset, class_names = load_data(DATA_DIR, IMG_HEIGHT, IMG_WIDTH)
 
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
@@ -29,8 +29,8 @@ assert tf.data.experimental.cardinality(val_dataset).numpy() == val_size, "Le da
 print("Le dataset de validation a la bonne taille")
 
 
-train_ds = preprocess_dataset(train_dataset, batch_size, augment=True)
-val_ds = preprocess_dataset(val_dataset, batch_size, augment=False)
+train_ds = preprocess_dataset(train_dataset, BATCH_SIZE, augment=True)
+val_ds = preprocess_dataset(val_dataset, BATCH_SIZE, augment=False)
 
 
 input_shape = (45, 45, 1)
@@ -73,7 +73,7 @@ history = compile_and_train(
     model,
     train_ds,
     val_ds,
-    epochs=epochs,
+    epochs=EPOCHS,
     learning_rate=learning_rate,
     class_weight=class_weights
 )
@@ -130,4 +130,4 @@ print("=== Tests de model_trainer.py terminés avec succès ===")
 
 
 # Sauvegarder le modèle
-save_model(model, model_name, save_dir)
+save_model(model, MODEL_NAME, SAVE_DIR)

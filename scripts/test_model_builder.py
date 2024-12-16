@@ -3,12 +3,12 @@ import tensorflow as tf
 from scripts.data_loader import load_data
 from scripts.preprocessing import preprocess_dataset
 from scripts.model_builder import build_cnn_model, model_summary
-from configuration import data_dir, img_width, img_height
+from configuration import DATA_DIR, IMG_WIDTH, IMG_HEIGHT
 
 # __ INITIALISATION __________________
 
-print(data_dir)
-dataset, class_names = load_data(data_dir, img_height, img_width)
+print(DATA_DIR)
+dataset, class_names = load_data(DATA_DIR, IMG_HEIGHT, IMG_WIDTH)
 
 total_size = tf.data.experimental.cardinality(dataset).numpy()
 train_size = int(0.8 * total_size)  # 80% pour l'entraînement

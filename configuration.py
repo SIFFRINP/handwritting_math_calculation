@@ -1,7 +1,13 @@
 import os
 
+# DEBUG LEVELS: 
+# - 1: Only print statements. 
+# - 2: Images processing debug. 
+DEBUG = 1
 
-DEBUG = True
+def DEBUG_PRINT(message: str): 
+    if DEBUG: 
+        print(message)
 
 # * _ WINDOW ___________________________________________________________________
 USE_ABS_SIZE    = False
@@ -11,12 +17,13 @@ W_NAME          = "handwritting_math_calculation"
 W_ICON_PATH     = os.path.join("icons", "icon.png")
 CALCULUS_HEIGHT = 65
 
-# * _ DRAW AREA ________________________________________________________________
-PEN_WIDTH = 10
-
 # * _ TEXT _____________________________________________________________________
 FONT_PATH = os.path.join("fonts", "math.ttf")
 FONT_SIZE = 100
+
+# * _ DRAW AREA ________________________________________________________________
+PEN_WIDTH           = 3
+DETECTION_WAIT_TIME = .5
 
 # * _ COLORS ___________________________________________________________________
 BACKGROUND_COLOR   = (211, 211, 211)
@@ -26,28 +33,32 @@ TEXT_COLOR         = (0  , 0  , 0  )
 ERROR_COLOR        = (156, 69 , 79 )
 
 # * _ PARSER ___________________________________________________________________
-AVAILABLE_OPERATOR  = "+-*/"
-PRIORITY_OPERATOR   = "*/"
+AVAILABLE_OPERATOR  = "+-×÷"
+PRIORITY_OPERATOR   = "×÷"
 END_EXPRESSION_CHAR = "="
 
-# * _ AI _______________________________________________________________________
-img_height = 45
-img_width = 45
-batch_size = 32
-epochs = 15
-learning_rate = 0.001
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-data_dir = os.path.join(project_root, "handwritting_math_calculation", "data", "extracted_images_sort")
-image_path = os.path.join(project_root, "handwritting_math_calculation", "images", "NONN.png")
-model_path = os.path.join(project_root, "handwritting_math_calculation", "models", "handwritten_math_calculator_model4.keras")
-save_dir = "models"
-model_name="handwritten_math_calculator_model5.keras"
-# model_name="cnn_model_best.keras"
-class_names = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '=']
+# * _ AI PARAMETERS ____________________________________________________________
+IMG_HEIGHT    = 45
+IMG_WIDTH     = 45
+BATCH_SIZE    = 32
+EPOCHS        = 15
+LEARNING_RATE = 0.001
+PROJECT_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR      = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "data", "symbols")
+IMAGE_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "images", "NONN.png")
+MODEL_NAME    = "handwritten_math_calculator_model14.keras"
+MODEL_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "models", MODEL_NAME)
+SAVE_DIR      = "models"
+CLASS_NAMES   = ["+", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '÷', '×']
+# 
 
-# * _ MODEL ____________________________________________________________________
-MODEL_IMG_SIZE = 45 
+# * _ ANSI COLOR _______________________________________________________________
+WARNING = "\x1b[33m"
+SUCCESS = "\x1b[32m"
+INFO    = "\x1b[1m"
+
+CLEAR_STYLE = "\x1b[0m"
 
 
 if __name__ == "__main__": 
-    print("\x1b[33m~[WARNING] This script is not meant to be executed.\x1b[0m"); 
+    print(f"{WARNING}~[WARNING] This script is not meant to be executed.{CLEAR_STYLE}"); 
