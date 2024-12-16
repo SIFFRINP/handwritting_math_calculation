@@ -39,12 +39,13 @@ AVAILABLE_OPERATOR  = "+-×÷"
 PRIORITY_OPERATOR   = "×÷"
 END_EXPRESSION_CHAR = "="
 
+
 # * _ AI PARAMETERS ____________________________________________________________
 IMG_HEIGHT    = 45
 IMG_WIDTH     = 45
 BATCH_SIZE    = 32
-EPOCHS        = 15
-LEARNING_RATE = 0.001
+EPOCHS        = 20
+LEARNING_RATE = 0.00015
 PROJECT_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR      = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "data", "symbols")
 IMAGE_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "images", "NONN.png")
@@ -52,7 +53,6 @@ MODEL_NAME    = "handwritten_math_calculator_model14.keras"
 MODEL_PATH    = os.path.join(PROJECT_ROOT, "handwritting_math_calculation", "models", MODEL_NAME)
 SAVE_DIR      = "models"
 CLASS_NAMES   = ["+", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '÷', '×']
-# 
 
 # * _ ANSI COLOR _______________________________________________________________
 WARNING = "\x1b[33m"

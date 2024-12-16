@@ -1,15 +1,23 @@
-import os
 import tensorflow as tf
-import numpy as np
 import matplotlib.pyplot as plt
 from scripts.data_loader import load_data
-from scripts.preprocessing import preprocess_dataset
+from scripts.preprocessing import preprocess_dataset, print_dataset_distribution, downsample_classes, augment_classes, data_augmentation
 from scripts.model_builder import build_cnn_model, model_summary
 from scripts.model_trainer import compile_and_train, save_model, evaluate_metrics_per_class, plot_confusion_matrix
-from configuration import DATA_DIR, IMG_WIDTH, IMG_HEIGHT, BATCH_SIZE, EPOCHS, learning_rate, SAVE_DIR, MODEL_NAME
+from configuration import DATA_DIR, IMG_WIDTH, IMG_HEIGHT, BATCH_SIZE, EPOCHS, LEARNING_RATE, SAVE_DIR, MODEL_NAME
 
 
 # __ INITIALISATION __________________
+
+print("Avant downsampling et augmentation :")
+print_dataset_distribution(DATA_DIR)
+
+downsample_classes(DATA_DIR, target_size=10000)
+augment_classes(DATA_DIR, target_size=10000, augment_function=data_augmentation)
+
+print("Après downsampling et augmentation :")
+print_dataset_distribution(DATA_DIR)
+
 
 print(DATA_DIR)
 dataset, class_names = load_data(DATA_DIR, IMG_HEIGHT, IMG_WIDTH)
@@ -55,16 +63,7 @@ for i, layer in enumerate(model.layers):
     print(f"Couche {i} - Type : {type(layer).__name__}")
     if hasattr(layer, 'output_shape'):
         print(f"  - Forme de sortie : {layer.output_shape}")
-        
 
-
-# Calcul des poids de classes
-class_counts = {'+': 25112, '-': 33997, '0': 6914, '1': 26520, '2': 26141, 
-                '3': 10909, '4': 7396, '5': 3545, '6': 3118, '7': 2909, 
-                '8': 3068, '9': 3737, '=': 13104}
-total_images = sum(class_counts.values())
-class_weights = {i: total_images / count for i, count in enumerate(class_counts.values())}
-print("Poids des classes : ", class_weights)
 
 
 # Étape 5 : Compilation et entraînement
@@ -74,14 +73,15 @@ history = compile_and_train(
     train_ds,
     val_ds,
     epochs=EPOCHS,
-    learning_rate=learning_rate,
-    class_weight=class_weights
+    learning_rate=LEARNING_RATE
 )
 
 
 # Vérifier les métriques par classe
 print("\n=== Vérification des métriques par classe ===")
-evaluate_metrics_per_class(model, val_ds, class_names)
+# evaluate_metrics_per_class(model, val_ds, class_names)
+evaluate_metrics_per_class(model, val_ds, class_names, show_errors=True)
+
 
 # Observer la confusion matrix
 plot_confusion_matrix(model, val_ds, class_names)
