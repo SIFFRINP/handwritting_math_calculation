@@ -1,9 +1,10 @@
 import os
 
 # DEBUG LEVELS: 
+# - 0: No debug info.
 # - 1: Only print statements. 
 # - 2: Images processing debug. 
-DEBUG = 1
+DEBUG = 0
 
 
 def DEBUG_PRINT(message: str): 
